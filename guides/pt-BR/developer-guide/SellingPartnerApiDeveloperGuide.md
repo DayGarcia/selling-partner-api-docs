@@ -43,9 +43,9 @@
 
   - [Migrar autorizações do Serviço de Marketplace Amazon (MWS)](#migrating-authorization-from-amazon-marketplace-web-service)
 
-- [Amazon Seller Central Partner Network authorization workflow](#amazon-seller-central-partner-network-authorization-workflow)
+- [Fluxo de autorização do Amazon Seller Central Partner Network](#amazon-seller-central-partner-network-authorization-workflow)
   
-  - [Step 1. The selling partner initiates authorization from the Amazon Seller Central Partner Network](#step-1-the-selling-partner-initiates-authorization-from-the-amazon-seller-central-partner-network)
+  - [Passo 1. The selling partner initiates authorization from the Amazon Seller Central Partner Network](#step-1-the-selling-partner-initiates-authorization-from-the-amazon-seller-central-partner-network)
   
   - [Step 2. The selling partner consents to authorize your application](#step-2-the-selling-partner-consents-to-authorize-your-application)
   
@@ -592,35 +592,36 @@ The following procedures show you how to view your application information and c
 
     Your LWA client identifier and client secret for that application appear. You will need these credentials to request an LWA access token. For more information, see [Step 1. Request a Login with Amazon access token](#step-1-request-a-login-with-amazon-access-token).
 
-# Authorizing Selling Partner API applications
+# Autorizar aplicações API do Parceiro de Vendas
 
-The authorization model for the Selling Partner API is based on [Login with Amazon](https://developer.amazon.com/docs/login-with-amazon/documentation-overview.html), Amazon's implementation of OAuth 2.0. In this model the selling partner authorizes your application by interacting with pages displayed by Amazon and by your website. Actions taken by the selling partner trigger responses by your website or by Amazon. The selling partner's browser is the user-agent that passes parameters between your website and Amazon at each selling partner action. To implement OAuth authorization you must configure your website to (1) accept and process the parameters that Amazon passes to it, and (2) redirect the selling partner’s browser and pass parameters to Amazon.
+O modelo de autorização da API do Parceiro de vendas é baseado no [Login com Amazon](https://developer.amazon.com/docs/login-with-amazon/documentation-overview.html),
+A implementação da Amazon do OAuth 2.0. Neste modelo o parceito de vendas autoriza sua aplicação por interagir com páginas exibidas pela Amazon e por seu website. As ações tomadas pelo parceiro de vendas são de responsabilidade de seu site ou da Amazon. O navegador do parceiro de vendas é o user-agent que passará os parâmetros entre seu site e a Amazon a cada ação do parceiro de vendas. Para implementar a autorização OAuth você deve configurar seu site para (1) aceitar e processar os parâmetros que a Amazon passará para ele, e (2) redirecionar para o navegador do parceiro de vendas e passar os parâmetros para a Amazon. 
 
-## How is my application authorized?
+## Como minha aplicação é autorizada?
 
-The way your applications are authorized depends on the application type. Here are applications types grouped by how they are authorized:
+A maneira como sua aplicação é autorizada depende do tipo da aplicação. Aqui estão os tipos de aplicações agrupadas por como elas são autorizadas:
 
-- **Public applications for sellers.** Applications that are publicly available and are authorized by sellers. These applications can be authorized using the following methods:
-  - [Amazon Seller Central Partner Network authorization workflow.](#amazon-seller-central-partner-network-authorization-workflow) An OAuth authorization workflow initiated from the Amazon Seller Central Partner Network detail page.
-  - [Website authorization workflow.](#Website-authorization-workflow) An OAuth authorization workflow initiated from your own website.
+- **Aplicações públicas para vendedores.** Aplicações que estão publicamente dispobíveis e são autorizadas por vendedores. Essas aplicações podem ser autorizadas utilizando os métodos a seguir:
+  - [Fluxo de autorização do Amazon Seller Central Partner Network.](#amazon-seller-central-partner-network-authorization-workflow) Uma autorização OAuth iniciada pelo Amazon Seller Central Partner Network.
+  - [Fluxo de autorização de Website.](#Website-authorization-workflow) Uma fluxo de autorização OAuth iniciada pelo seu próprio website.
 
-- **Public applications for vendors.** Applications that are publicly available and are authorized by vendors. These applications can be authorized using the following method:
-  - [Website authorization workflow.](#Website-authorization-workflow) An OAuth authorization workflow initiated from your own website.
+- **Aplicações públicas para fornecedores.** Aplicações que estão publicamente disponíveis e são autorizadas por fornecedores. Estas aplicações podem ser autorizadas utilizando o seguinte método:
+  - [Fluxo de autorização Website.](#Website-authorization-workflow) Uma autenticação OAuth iniciada pelo seu próprio website.
 
-- **Private applications for sellers or vendors.** Applications that are available only to your organization. These can be seller or vendor applications. These applications can be authorized using the following method:
-  - [Self authorization.](#Self-authorization) A self-authorization procedure.
+- **Aplicações privadas para vendedores ou fornecedores.** Aplicações que estão disponíveis apenas para sua empresa. As aplicações podem ser de vendedor ou de fornecedor. Essas aplicações podem ser autorizadas utilizando o método a seguir:
+  - [Auto-autorização.](#Self-authorization) Um procedimento de auto-autorização.
 
-**Note.** You can call [Grantless operations](#grantless-operations) without explicit authorization from a selling partner.
+**Nota.** Você pode chamar You can call [Operações ------](#grantless-operations) sem autorização explícita de um parceiro de vendas.
 
-For more information, see [Terminology](#Terminology).
+Para mais informações, consulte [Terminologia](#Terminology).
 
-## Constructing an OAuth authorization URI
+## Construindo uma URI de autorização
 
-An OAuth authorization URI is a key component for creating and testing Selling Partner API authorization workflows. The OAuth authorization URI redirects a browser to an Amazon consent page, where a selling partner can give your application consent to make calls to the Selling Partner API on their behalf. If the selling partner is not signed into Seller Central (for sellers) or Vendor Central (for vendors), a sign-in page appears first. 
+Uma autorização OAuth é um componente chave para criação e testes do fluxo de autorização da API do parceiro de vendas. A autorização URI OAuth redireciona um navegador para uma página de consentimento da Amazon, onde um parceiro de vendas pode dar seu consentimento a aplicação para fazer chamadas da API do Parceiro de Vendas em nome deles. Se o parceiro de vendas não está logado na Central de Vendas (para vendedores) ou a Central de Fornecedores (para fornecedores), uma pagina de login aparecerá primeiro.
 
-If a selling partner authorizes your application starting from your own website (the [Website authorization workflow](#website-authorization-workflow)) your website uses an OAuth authorization URI to redirect the selling partner to the Amazon consent page. Even if a selling partner authorizes your application starting from the Amazon Seller Central Partner Network (the [Amazon Seller Central Partner Network authorization workflow](#amazon-seller-central-partner-network-authorization-workflow)), you still need an OAuth authorization URI to test your authorization workflow in draft status before creating a live listing in the Amazon Seller Central Partner Network.
+Se um parceiro de vendas autoriza sua aplicação de iniciar em seu próprio website (o [Fluxo de autorização de website](#website-authorization-workflow)) sey website utiliza uma URI de autorização para redirecionar o parceiro de vendas para a página de consentimento da Amazon. Mesmo se um parceiro de vendas autorizar sua aplicação começando da Rede Central de Parceiros de Vendas (o [fluxo de autorização para a Rede Central de Parceiros de Vendas](#amazon-seller-central-partner-network-authorization-workflow)), você ainda precisa de uma autorização OAuth para testar seu fluxo de autorização em status de rascunho antes de criar uma lista ativa na Rede Central de Parceiros de Vendas.
 
-For the purposes of constructing an OAuth authorization URI, applications are grouped into two types:
+Para propósitos de construção de uma URI de autorização OAuth, as aplicações estão agrupadas em dois tipos:
 
 - **All public applications and private seller applications.** This can be: (1) Applications that are publicly available and are authorized by a seller or by a vendor,  and (2) Seller applications that are available only to your organization, and are self-authorized.
 
